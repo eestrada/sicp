@@ -2,13 +2,13 @@
 (define nil '())
 
 (define (last-pair l)
-  "Excercise 2.17: return last pair of a list"
+  "Exercise 2.17: return last pair of a list"
   (if (eq? (cdr l) '())
       l
       (last-pair (cdr l))))
 
 (define (reverse2 l)
-  "Excercise 2.18: procedure to reverse a list"
+  "Exercise 2.18: procedure to reverse a list"
   (define (reverse2-iter f r)
     (if (eq? f '())
         r
@@ -16,7 +16,7 @@
   (reverse2-iter l '()))
 
 (define (same-parity first . rest)
-  "Excercise 2.20: using dotted-tail notation, return only arguments
+  "Exercise 2.20: using dotted-tail notation, return only arguments
    that have the same even-odd parity as the first argument."
   (define (sp-iter first-parity l r)
     (if (eq? r '())
@@ -32,17 +32,17 @@
            rest))
 
 (define (square-list1 items)
-  "Excercise 2.21: return squared list (using explicit recursion)"
+  "Exercise 2.21: return squared list (using explicit recursion)"
   (if (null? items)
       '()
       (cons (square (car items)) (square-list1 (cdr items)))))
 
 (define (square-list2 items)
-  "Excercise 2.21: return squared list (using map)"
+  "Exercise 2.21: return squared list (using map)"
   (map square items))
 
 (define (square-list-bad1 items)
-  "Excercise 2.22: this doesn't work because he is using cons which builds
+  "Exercise 2.22: this doesn't work because he is using cons which builds
    the list in reverse since const can only know the head of the list and
    the only place to append a pair is to the front."
   (define (iter things answer)
@@ -53,7 +53,7 @@
   (iter items nil))
 
 (define (square-list-bad2 items)
-  "Excercise 2.22: this doesn't work because he is placing a list as
+  "Exercise 2.22: this doesn't work because he is placing a list as
    the first item in the pair when he is consing. Basically, he is making
    a really weird tree instead of a list."
   (define (iter things answer)
@@ -63,11 +63,11 @@
               (cons answer (square (car things))))))
   (iter items nil))
 
-"Excercise 2.22: to get this to work, he should instead use the append or
+"Exercise 2.22: to get this to work, he should instead use the append or
 the append! functions to append new values to the END of the list."
 
 (define (for-each2 proc items)
-  "Excercise 2.23: implement for-each (and mine even does
+  "Exercise 2.23: implement for-each (and mine even does
    tail-call optimization :)"
   (if (null? items)
       items
@@ -75,7 +75,7 @@ the append! functions to append new values to the END of the list."
         (proc (car items))
         (for-each2 proc (cdr items)))))
 
-"Excercise 2.24: I figured out the first part (the interpreters representation) but not
+"Exercise 2.24: I figured out the first part (the interpreters representation) but not
 the second part (box and pointer); that part I went to scheme wiki to
 undestand"
 
@@ -102,7 +102,7 @@ undestand"
                          +---+      +---+
 "
 
-"Excercise 2.25: get the number 7 from each list structure"
+"Exercise 2.25: get the number 7 from each list structure"
 ;; (1 3 (5 7) 9)
 (car (cdr (car (cdr (cdr '(1 3 (5 7) 9))))))
 ;; ((7))
@@ -111,7 +111,7 @@ undestand"
 (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr '(1 (2 (3 (4 (5 (6 7))))))))))))))))))
 (cadadr (cadadr (cadadr '(1 (2 (3 (4 (5 (6 7)))))))))
 
-"Excercise 2.26: determine what the evaluation would be of append, cons and list"
+"Exercise 2.26: determine what the evaluation would be of append, cons and list"
 (append '(1 2 3) '(4 5 6)) ;; -> (1 2 3 4 5 6)
 (cons '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) 4 5 6)
 ;; I initially assumed the above would result in ((1 2 3) . (4 5 6)) forgetting
@@ -119,10 +119,10 @@ undestand"
 ;; another pair, meaning the list is simply extended.
 (list '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) (4 5 6))
 
-"Excercise 2.27: deep reverse function"
+"Exercise 2.27: deep reverse function"
 
 (define (deep-reverse l)
-  "Excercise 2.27: deep reverse function"
+  "Exercise 2.27: deep reverse function"
   (define (reverse2-iter f r)
     (if (eq? f '())
         r
