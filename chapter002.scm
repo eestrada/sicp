@@ -119,8 +119,6 @@ undestand"
 ;; another pair, meaning the list is simply extended.
 (list '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) (4 5 6))
 
-"Exercise 2.27: deep reverse function"
-
 (define (deep-reverse l)
   "Exercise 2.27: deep reverse function"
   (define (reverse2-iter f r)
@@ -131,3 +129,6 @@ undestand"
                         (car f))))
           (reverse2-iter (cdr f) (cons head r)))))
   (reverse2-iter l '()))
+
+(define (fringe t)
+  "Exercise 2.28: function to flatten a tree, left to right")
