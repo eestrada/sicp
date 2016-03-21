@@ -74,3 +74,60 @@ the append! functions to append new values to the END of the list."
       (let ()
         (proc (car items))
         (for-each2 proc (cdr items)))))
+
+"Excercise 2.24: I figured out the first part (the interpreters representation) but not
+the second part (box and pointer); that part I went to scheme wiki to
+undestand"
+
+'(1 (2 (3 4)))
+
+" ;; from scheme wiki at (http://community.schemewiki.org/?sicp-ex-2.24)
+   +---+---+  +---+---+
+   | * | *-+->| * | / |
+   +-+-+---+  +-+-+---+
+     |          |
+     V          V
+   +---+      +---+---+  +---+---+
+   | 1 |      | * | *-+->| * | / |
+   +---+      +-+-+---+  +---+---+
+                |          |
+                V          V
+              +---+      +---+---+  +---+---+
+              | 2 |      | * | *-+->| * | / |
+              +---+      +-+-+---+  +-+-+---+
+                           |          |
+                           V          V
+                         +---+      +---+
+                         | 3 |      | 4 |
+                         +---+      +---+
+"
+
+"Excercise 2.25: get the number 7 from each list structure"
+;; (1 3 (5 7) 9)
+(car (cdr (car (cdr (cdr '(1 3 (5 7) 9))))))
+;; ((7))
+(car (car '((7))))
+;; (1 (2 (3 (4 (5 (6 7))))))
+(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr '(1 (2 (3 (4 (5 (6 7))))))))))))))))))
+(cadadr (cadadr (cadadr '(1 (2 (3 (4 (5 (6 7)))))))))
+
+"Excercise 2.26: determine what the evaluation would be of append, cons and list"
+(append '(1 2 3) '(4 5 6)) ;; -> (1 2 3 4 5 6)
+(cons '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) 4 5 6)
+;; I initially assumed the above would result in ((1 2 3) . (4 5 6)) forgetting
+;; that if the cdr of a pair is another list, really it is just pointing to
+;; another pair, meaning the list is simply extended.
+(list '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) (4 5 6))
+
+"Excercise 2.27: deep reverse function"
+
+(define (deep-reverse l)
+  "Excercise 2.27: deep reverse function"
+  (define (reverse2-iter f r)
+    (if (eq? f '())
+        r
+        (let ((head (if (list? (car f))
+                        (reverse2-iter (car f) '())
+                        (car f))))
+          (reverse2-iter (cdr f) (cons head r)))))
+  (reverse2-iter l '()))
