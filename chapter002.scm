@@ -133,15 +133,30 @@ undestand"
 (define (fringe tree)
   "Exercise 2.28: function to flatten a tree, left to right
 
-   Doesn't quite work right yet. Adds an extra empty list in there."
-  (define (fringe-inner l t)
-    (define tree-left (if (and (pair? (car t)) (list? (car t)))
-                          (fringe-inner '() (car t))
-                          (list (car t))))
-    (define tree-rght (cond ((and (pair? (cdr t)) (list? (car (cdr t))))
-                                (fringe-inner '() (car (cdr t))))
-                            ((pair? (cdr t))
-                             (list (car (cdr t))))
-                            (else (list (cdr t)))))
-    (append l tree-left tree-rght))
-  (fringe-inner '() tree))
+   This is just a specialized version of count-leaves from the book."
+  (cond ((null? tree) tree)
+        ((not (pair? tree)) (list tree))
+        (else (append (fringe (car tree))
+                      (fringe (cdr tree))))))
+
+"Exercise 2.29: mobile functions."
+(define (make-mobile left right)
+  (list left right))
+
+(define (make-branch length structure)
+  (list length structure))
+
+(define (left-branch mobile)
+  (car mobile))
+
+(define (right-branch mobile)
+  (car (cdr mobile)))
+
+(define (branch-length branch)
+  (car branch))
+
+(define (branch-structure branch)
+  (car (cdr branch)))
+
+(define (total-weight mobile)
+  (car branch))
