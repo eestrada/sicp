@@ -159,4 +159,28 @@ undestand"
   (car (cdr branch)))
 
 (define (total-weight mobile)
-  (car branch))
+  (let ((left (branch-structure (left-branch mobile)))
+        (right (branch-structure (right-branch mobile))))
+  (+ (if (number? left)
+         left
+         (total-weight left))
+     (if (number? right)
+         right
+         (total-weight right)))))
+
+(define (mobile-balanced? mobile)
+  (define left (branch-structure (left-branch mobile)))
+  (define right (branch-structure (right-branch mobile)))
+  (= (if (number? left)
+         left
+         (total-weight left))
+     (if (number? right)
+         right
+         (total-weight right))))
+
+"Exercise 2.29: mobile functions changed by using cons instead of list."
+(define (right-branch2 mobile)
+  (cdr mobile))
+
+(define (branch-structure2 branch)
+  (cdr branch))
