@@ -184,3 +184,50 @@ undestand"
 
 (define (branch-structure2 branch)
   (cdr branch))
+
+(define (square-tree tree)
+  "Exercise 2.30: function to square values in a tree
+
+   This is just a specialized version of count-leaves from the book."
+  (cond ((null? tree) tree)
+        ((not (pair? tree)) (square tree))
+        (else (cons (square-tree (car tree))
+                    (square-tree (cdr tree))))))
+
+(define (square-tree2 tree)
+  "Exercise 2.30: function to square values in a tree, but using map
+
+   This is just a specialized version of scale-tree from the book."
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (square-tree2 sub-tree)
+             (square sub-tree)))
+       tree))
+
+(define (tree-map func tree)
+  "Exercise 2.31: map a function on a tree"
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (tree-map func sub-tree)
+             (func sub-tree)))
+       tree))
+
+(define (subsets s)
+  "Exercise 2.32: create a set of subsets
+
+   All the work happens when we are unwinding the stack. Basically, we
+   prepend the first item of `s` onto the return set of subsets. Initially,
+   the only subset is the empty set `'()`. Then 3 is prepended to the empty
+   set and appended to the set of subsets, so then we have `'(() (3))` since
+   prepending (aka consing) anything to a list, even an empty one, just
+   creates another list. This same process is repeated for the numbers `2`
+   and then `1`.
+
+   It took me a while to understand this one and I needed to look at the
+   following URL to do even that:
+   http://community.schemewiki.org/?sicp-ex-2.32"
+  (if (null? s)
+      (list '())
+      (let ((rest (subsets (cdr s))))
+        (append rest (map (lambda (v) (cons (car s) v))
+                          rest)))))
