@@ -231,3 +231,50 @@ undestand"
       (let ((rest (subsets (cdr s))))
         (append rest (map (lambda (v) (cons (car s) v))
                           rest)))))
+
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+        ((predicate (car sequence))
+         (cons (car sequence)
+               (filter predicate (cdr sequence))))
+        (else (filter predicate (cdr sequence)))))
+
+(define (accumulate-recursive op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate-recursive op initial (cdr sequence)))))
+
+(define (accumulate-iterate op initial sequence)
+  "Doesn't quite work right yet..."
+  (if (null? sequence)
+      initial
+      (accumulate-iterate op
+                          (op (car sequence) initial)
+                          (cdr sequence))))
+
+(define accumulate accumulate-recursive)
+
+(define (enumerate-interval low high)
+  (if (> low high)
+      nil
+      (cons low (enumerate-interval (+ low 1) high))))
+
+(define (enumerate-tree tree)
+  (cond ((null? tree) nil)
+        ((not (pair? tree)) (list tree))
+        (else (append (enumerate-tree (car tree))
+                      (enumerate-tree (cdr tree))))))
+
+"Exercise 2.33: Fill in the missing expressions to complete the
+following definitions of some basic list-manipulation operations as
+accumulations:"
+
+(define (accu-map p sequence)
+  (accumulate (lambda (x y) (cons (p x) y)) nil sequence))
+
+(define (accu-append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (accu-length sequence)
+  (accumulate (lambda (x y) (+ y 1)) 0 sequence))
