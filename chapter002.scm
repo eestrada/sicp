@@ -278,3 +278,27 @@ accumulations:"
 
 (define (accu-length sequence)
   (accumulate (lambda (x y) (+ y 1)) 0 sequence))
+
+(define (horner-eval x coefficient-sequence)
+  "Exercise 2.34: Horner evaluation.
+
+   My original solution was all mixed up. I didn't figure it out until
+   I read the explanations at: http://community.schemewiki.org/?sicp-ex-2.34"
+  (accumulate (lambda (this-coeff higher-terms)
+                (+ (* higher-terms x) this-coeff))
+              0
+              coefficient-sequence))
+
+(define (accu-count-leaves t)
+  "Exercise 2.35: count-leaves using accumulate
+
+   This particular exercise felt forced. It is neither easier nor
+   clearer to use accumulate to accomplish this. As I started to solve
+   this I thought 'It can't be done this way. It is too asinine.' Then I
+   checked schemewiki and found that the solutions there were just as
+   silly as my own. This exercise felt like a problem for the sake of one.
+   :unamused:"
+  (accumulate +
+              0
+              (map (lambda (x) 1)
+                   (enumerate-tree t))))
