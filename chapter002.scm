@@ -302,3 +302,26 @@ accumulations:"
               0
               (map (lambda (x) 1)
                    (enumerate-tree t))))
+
+(define (accumulate-n op init seqs)
+  "Exercise 2.36: accumulate a list of lists"
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)))))
+
+"Exercise 2.37: define matrix operations"
+
+(define (dot-product v w)
+  (accumulate + 0 (map * v w)))
+
+(define (matrix-*-vector m v)
+  (map (lambda (row) (dot-product row v))
+       m))
+
+(define (transpose mat)
+  (accumulate-n cons '() mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (row) (matrix-*-vector cols row)) m)))
