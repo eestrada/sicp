@@ -345,3 +345,11 @@ accumulations:"
 (fold-left list nil (list 1 2 3))   ;; (((() 1) 2) 3)
 ;; in order for an operation to be the same in either fold-left of fold-right
 ;; the operation must be commutative (and possibly associative as well?).
+
+"Exercise 2.39: reverse using fold-left and fold-right"
+
+(define (reverse-fr sequence)
+  (fold-right (lambda (x y) (append y (list x))) nil sequence))
+
+(define (reverse-fl sequence)
+  (fold-left (lambda (x y) (cons y x)) nil sequence))
