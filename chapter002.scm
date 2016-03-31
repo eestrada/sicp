@@ -325,3 +325,23 @@ accumulations:"
 (define (matrix-*-matrix m n)
   (let ((cols (transpose n)))
     (map (lambda (row) (matrix-*-vector cols row)) m)))
+
+"Exercise 2.38: fold-left and fold-right"
+
+(define fold-right accumulate)
+
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial sequence))
+
+;; what is the result of the following?
+(fold-right / 1 (list 1 2 3))       ;; 3 / 1 = 3, 2 / 3 = 2/3, 1 / 2/3 -> 3/2
+(fold-left / 1 (list 1 2 3))        ;; 1 / 1 = 1, 1 / 2 = 1/2, 1/2 / 3 -> 1/6
+(fold-right list nil (list 1 2 3))  ;; (1 (2 (3 ())))
+(fold-left list nil (list 1 2 3))   ;; (((() 1) 2) 3)
+;; in order for an operation to be the same in either fold-left of fold-right
+;; the operation must be commutative (and possibly associative as well?).
