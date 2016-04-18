@@ -394,3 +394,32 @@ accumulations:"
 (define (remove item sequence)
   (filter (lambda (x) (not (= x item)))
           sequence))
+
+(define (unique-pairs n)
+  "Exercise 2.40: Generate sequence of pairs `(i, j)` with `1 <= j < i <= n`.
+
+   Just extracts the one part of original `prime-sum-pairs` that does this. Pretty easy. :)"
+  (flatmap
+   (lambda (i)
+     (map (lambda (j) (list i j))
+          (enumerate-interval 1 (- i 1))))
+   (enumerate-interval 1 n)))
+
+(define (prime-sum-pairs n)
+  "Exercise 2.40: Simplified definition using `unique-pairs` procedure`."
+  (map make-pair-sum (filter prime-sum? (unique-pairs n))))
+
+(define (ordered-triplet-sum n s)
+  "Exercise 2.41: Find all ordered triples of distinct positive
+
+   integers `i`, `j`, and `k` less than or equal to a given integer `n`
+   that sum to a given integer `s`."
+  (filter (lambda (t) (= s (fold-left + 0 t)))
+          (flatmap
+           (lambda (i)
+             (flatmap
+              (lambda (j)
+                (map (lambda (k) (list i j k))
+                     (enumerate-interval 1 (- j 1))))
+              (enumerate-interval 1 (- i 1))))
+           (enumerate-interval 1 n))))
