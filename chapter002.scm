@@ -423,3 +423,151 @@ accumulations:"
                      (enumerate-interval 1 (- j 1))))
               (enumerate-interval 1 (- i 1))))
            (enumerate-interval 1 n))))
+
+;; Exercise 2.42: I haven't had a lot of time lately and this was just
+;; too big for my brain in the limited energy I have had left lately. I
+;; just read the solutions at schemewiki and tried to understand them and
+;; hopefully glean what I needed to from them.
+(define (orig a b)
+  (display a b))
+
+(define (split orig splitter)
+  "Exercise 2.45"
+  (define (rec painter n)
+    (if (= n 0)
+        painter
+        (let ((smaller (rec painter (- n 1))))
+          (orig painter (splitter smaller smaller)))))
+  rec)
+
+(define (frame-coord-map frame)
+  (lambda (v)
+    (add-vect
+     (origin-frame frame)
+     (add-vect (scale-vect (xcor-vect v) (edge1-frame frame))
+               (scale-vect (ycor-vect v) (edge2-frame frame))))))
+
+;; Exercise 2.46 vector data abstraction and operations
+
+(define (make-vect x y)
+  (list x y))
+
+(define (xcor-vect v)
+  (car v))
+
+(define (ycor-vect v)
+  (car (cdr v)))
+
+(define (add-vect v1 v2)
+  (make-vect (+ (xcor-vect v1) (xcor-vect v2))
+             (+ (ycor-vect v1) (ycor-vect v2))))
+
+(define (sub-vect v1 v2)
+  (make-vect (- (xcor-vect v1) (xcor-vect v2))
+             (- (ycor-vect v1) (ycor-vect v2))))
+
+(define (scale-vect s v)
+  (make-vect (* s (xcor-vect v))
+             (* s (ycor-vect v))))
+
+;; Exercise 2.46 end.
+
+;; Exercise 2.47 frame data abstraction and operations
+
+(define (make-frame origin edge1 edge2)
+  (cons origin (cons edge1 edge2)))
+
+(define (origin-frame frame)
+  (car frame))
+
+(define (edge1-frame frame)
+  (car (cdr frame)))
+
+(define (edge2-frame frame)
+  (cdr (cdr frame)))
+
+;; This feels a bit cleaner to me
+(define (make-frame origin edge1 edge2)
+  (list origin cons edge1 edge2))
+
+(define (origin-frame frame)
+  (car frame))
+
+(define (edge1-frame frame)
+  (car (cdr frame)))
+
+(define (edge2-frame frame)
+  (car (cdr (cdr frame))))
+
+(define (segments->painter segment-list)
+  (lambda (frame)
+    (for-each
+     (lambda (segment)
+       (draw-line
+        ((frame-coord-map frame)
+         (start-segment segment))
+        ((frame-coord-map frame)
+         (end-segment segment))))
+     segment-list)))
+
+;; Exercise 2.48
+
+(define (make-segment v1 v2)
+  (list v1 v2))
+
+(define (start-segment s)
+  (car s))
+
+(define (end-segment s)
+  (car (cdr s)))
+
+;; Exercise 2.48 end
+
+;; Exercise 2.49
+(define (outline-frame)
+  "Return a painter procedure that uses lines to outline the given frame."
+  (let ((bl (make-vect 0 0))
+        (tl (make-vect 0 1))
+        (br (make-vect 1 0))
+        (tr (make-vect 1 1)))
+    (segments->painter
+     (list (make-segment bl tl)
+           (make-segment tl tr)
+           (make-segment tr br)
+           (make-segment br bl)))))
+
+(define (x-frame)
+  "Return a painter procedure that uses lines to draw \"X\"."
+  (segments->painter
+   (list (make-segment (make-vect 0 0) (make-vect 1 1))
+         (make-segment (make-vect 0 1) (make-vect 1 0)))))
+
+(define (diamond-frame frame)
+  "Return a painter procedure that uses lines to draw diamond."
+  (let ((left (make-vect 0.0 0.5))
+        (top (make-vect 0.5 1.0))
+        (right (make-vect 1.0 0.5))
+        (bottom (make-vect 0.5 0.0)))
+    (segments->painter
+     (list (make-segment left top)
+           (make-segment top right)
+           (make-segment right bottom)
+           (make-segment bottom left)))))
+
+(define (wave-frame frame)
+  "Return a painter procedure that uses lines to draw the wave image from the book."
+  (let ((left (make-vect 0.0 0.5))
+        (top (make-vect 0.5 1.0))
+        (right (make-vect 1.0 0.5))
+        (bottom (make-vect 0.5 0.0)))
+    (segments->painter
+     (list (make-segment left top)
+           (make-segment top right)
+           (make-segment right bottom)
+           (make-segment bottom left)))))
+
+;; Exercise 2.49 end
+
+;; NOTE: I think I am going to transition to racket so that I can
+;; actually draw these examples. It feels hard to be sure I am actually
+;; understanding this section without any real feedback.
