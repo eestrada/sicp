@@ -2,7 +2,9 @@
 
 (require graphics/graphics)
 (open-graphics)
-(define vp (open-viewport "A picture language" 500 500))
+(define vp-xres 500)
+(define vp-yres vp-xres)
+(define vp (open-viewport "A picture language" vp-xres vp-yres))
 
 (define (square x) (* x x))
 (define nil '())
@@ -478,23 +480,14 @@ accumulations:"
 
 ;; Exercise 2.46 end.
 
+(define (vect->posn vect)
+  (make-posn (* (xcor-vect vect) vp-xres)
+             (* (- 1 (ycor-vect vect)) vp-yres)))
+
 ;; Exercise 2.47 frame data abstraction and operations
 
-(define (make-frame origin edge1 edge2)
-  (cons origin (cons edge1 edge2)))
-
-(define (origin-frame frame)
-  (car frame))
-
-(define (edge1-frame frame)
-  (car (cdr frame)))
-
-(define (edge2-frame frame)
-  (cdr (cdr frame)))
-
-;; This feels a bit cleaner to me
 ;; (define (make-frame origin edge1 edge2)
-;;   (list origin cons edge1 edge2))
+;;   (cons origin (cons edge1 edge2)))
 ;;
 ;; (define (origin-frame frame)
 ;;   (car frame))
@@ -503,17 +496,31 @@ accumulations:"
 ;;   (car (cdr frame)))
 ;;
 ;; (define (edge2-frame frame)
-;;   (car (cdr (cdr frame))))
+;;   (cdr (cdr frame)))
+
+;; This feels a bit cleaner and simpler to me
+
+(define (make-frame origin edge1 edge2)
+  (list origin edge1 edge2))
+
+(define (origin-frame frame)
+  (list-ref frame 0))
+
+(define (edge1-frame frame)
+  (list-ref frame 1))
+
+(define (edge2-frame frame)
+  (list-ref frame 2))
 
 (define (segments->painter segment-list)
   (lambda (frame)
     (for-each
      (lambda (segment)
-       (draw-line
-        ((frame-coord-map frame)
-         (start-segment segment))
-        ((frame-coord-map frame)
-         (end-segment segment))))
+       ((draw-line vp)
+        (vect->posn ((frame-coord-map frame)
+         (start-segment segment)))
+        (vect->posn ((frame-coord-map frame)
+         (end-segment segment)))))
      segment-list)))
 
 ;; Exercise 2.48
@@ -530,8 +537,8 @@ accumulations:"
 ;; Exercise 2.48 end
 
 ;; Exercise 2.49
-(define (outline-frame)
-  "Return a painter procedure that uses lines to outline the given frame."
+(define outline-painter
+  ;; "Return a painter procedure that uses lines to outline the given frame."
   (let ((bl (make-vect 0 0))
         (tl (make-vect 0 1))
         (br (make-vect 1 0))
@@ -542,14 +549,14 @@ accumulations:"
            (make-segment tr br)
            (make-segment br bl)))))
 
-(define (x-frame)
-  "Return a painter procedure that uses lines to draw \"X\"."
+(define x-painter
+  ;; "Return a painter procedure that uses lines to draw \"X\"."
   (segments->painter
    (list (make-segment (make-vect 0 0) (make-vect 1 1))
          (make-segment (make-vect 0 1) (make-vect 1 0)))))
 
-(define (diamond-frame frame)
-  "Return a painter procedure that uses lines to draw diamond."
+(define diamond-painter
+  ;; "Return a painter procedure that uses lines to draw diamond."
   (let ((left (make-vect 0.0 0.5))
         (top (make-vect 0.5 1.0))
         (right (make-vect 1.0 0.5))
@@ -560,8 +567,9 @@ accumulations:"
            (make-segment right bottom)
            (make-segment bottom left)))))
 
-(define (wave-frame frame)
-  "Return a painter procedure that uses lines to draw the wave image from the book."
+
+(define wave-painter
+  ;; "Return a painter procedure that uses lines to draw the wave image from the book."
   (let ((left (make-vect 0.0 0.5))
         (top (make-vect 0.5 1.0))
         (right (make-vect 1.0 0.5))
@@ -578,4 +586,7 @@ accumulations:"
 ;; actually draw these examples. It feels hard to be sure I am actually
 ;; understanding this section without any real feedback.
 
-(wave-frame '())
+(diamond-painter (make-frame
+                  (make-vect 0 0)
+                  (make-vect 1 0)
+                  (make-vect 0 1)))
