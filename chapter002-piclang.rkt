@@ -567,18 +567,58 @@ accumulations:"
            (make-segment right bottom)
            (make-segment bottom left)))))
 
+;; (define wave-painter
+;;   ;; "Return a painter procedure that uses lines to draw the wave image from the book."
+;;   (let ((left (make-vect 0.0 0.5))
+;;         (top (make-vect 0.5 1.0))
+;;         (right (make-vect 1.0 0.5))
+;;         (bottom (make-vect 0.5 0.0)))
+;;     (segments->painter
+;;      (list (make-segment left top)
+;;            (make-segment top right)
+;;            (make-segment right bottom)
+;;            (make-segment bottom left)))))
 
+
+;; Original wave-painter code taken from https://gist.github.com/etscrivner/e0105d9f608b00943a49
 (define wave-painter
   ;; "Return a painter procedure that uses lines to draw the wave image from the book."
-  (let ((left (make-vect 0.0 0.5))
-        (top (make-vect 0.5 1.0))
-        (right (make-vect 1.0 0.5))
-        (bottom (make-vect 0.5 0.0)))
-    (segments->painter
-     (list (make-segment left top)
-           (make-segment top right)
-           (make-segment right bottom)
-           (make-segment bottom left)))))
+  (segments->painter
+   (list
+    (make-segment (make-vect 0.5 0.4) ;;; leg triangle
+                  (make-vect 0.6 0.0))
+    (make-segment (make-vect 0.5 0.4)
+                  (make-vect 0.4 0.0))
+    (make-segment (make-vect 0.3 0.0)
+                  (make-vect 0.35 0.4))
+    (make-segment (make-vect 0.35 0.4)
+                  (make-vect 0.3 0.7))
+    (make-segment (make-vect 0.3 0.7)
+                  (make-vect 0.2 0.6))
+    (make-segment (make-vect 0.2 0.6)
+                  (make-vect 0 0.8))
+    (make-segment (make-vect 0 0.9)
+                  (make-vect 0.2 0.7))
+    (make-segment (make-vect 0.2 0.7)
+                  (make-vect 0.3 0.75))
+    (make-segment (make-vect 0.3 0.75)
+                  (make-vect 0.4 0.75))
+    (make-segment (make-vect 0.4 0.75)
+                  (make-vect 0.35 0.9))
+    (make-segment (make-vect 0.35 0.9)
+                  (make-vect 0.4 1.0))
+    (make-segment (make-vect 0.5 1.0)
+                  (make-vect 0.55 0.9))
+    (make-segment (make-vect 0.55 0.9)
+                  (make-vect 0.5 0.75))
+    (make-segment (make-vect 0.5 0.75)
+                  (make-vect 0.6 0.75))
+    (make-segment (make-vect 0.6 0.75)
+                  (make-vect 1.0 0.45))
+    (make-segment (make-vect 1.0 0.3)
+                  (make-vect 0.6 0.5))
+    (make-segment (make-vect 0.6 0.5)
+                  (make-vect 0.7 0.0)))))
 
 ;; Exercise 2.49 end
 
@@ -586,7 +626,7 @@ accumulations:"
 ;; actually draw these examples. It feels hard to be sure I am actually
 ;; understanding this section without any real feedback.
 
-(diamond-painter (make-frame
+(wave-painter (make-frame
                   (make-vect 0 0)
                   (make-vect 1 0)
                   (make-vect 0 1)))
