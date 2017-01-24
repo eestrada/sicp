@@ -1,6 +1,6 @@
-#lang racket/gui
+#lang sicp
 
-(require graphics/graphics)
+(#%require graphics/graphics)
 (open-graphics)
 (define vp-xres 500)
 (define vp-yres vp-xres)
