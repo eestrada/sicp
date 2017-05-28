@@ -83,8 +83,8 @@
               (cons answer (square (car things))))))
   (iter items nil))
 
-"Exercise 2.22: to get this to work, he should instead use the append or
-the append! functions to append new values to the END of the list."
+;; Exercise 2.22: to get this to work, he should instead use the append or
+;; the append! functions to append new values to the END of the list.
 
 (define (for-each2 proc items)
   "Exercise 2.23: implement for-each (and mine even does
@@ -95,34 +95,33 @@ the append! functions to append new values to the END of the list."
         (proc (car items))
         (for-each2 proc (cdr items)))))
 
-"Exercise 2.24: I figured out the first part (the interpreters representation) but not
-the second part (box and pointer); that part I went to scheme wiki to
-undestand"
+;; Exercise 2.24: I figured out the first part (the interpreters representation) but not
+;; the second part (box and pointer); that part I went to scheme wiki to
+;; undestand
 
 '(1 (2 (3 4)))
 
-" ;; from scheme wiki at (http://community.schemewiki.org/?sicp-ex-2.24)
-   +---+---+  +---+---+
-   | * | *-+->| * | / |
-   +-+-+---+  +-+-+---+
-     |          |
-     V          V
-   +---+      +---+---+  +---+---+
-   | 1 |      | * | *-+->| * | / |
-   +---+      +-+-+---+  +---+---+
-                |          |
-                V          V
-              +---+      +---+---+  +---+---+
-              | 2 |      | * | *-+->| * | / |
-              +---+      +-+-+---+  +-+-+---+
-                           |          |
-                           V          V
-                         +---+      +---+
-                         | 3 |      | 4 |
-                         +---+      +---+
-"
+;; from scheme wiki at (http://community.schemewiki.org/?sicp-ex-2.24)
+;;    +---+---+  +---+---+
+;;    | * | *-+->| * | / |
+;;    +-+-+---+  +-+-+---+
+;;      |          |
+;;      V          V
+;;    +---+      +---+---+  +---+---+
+;;    | 1 |      | * | *-+->| * | / |
+;;    +---+      +-+-+---+  +---+---+
+;;                 |          |
+;;                 V          V
+;;               +---+      +---+---+  +---+---+
+;;               | 2 |      | * | *-+->| * | / |
+;;               +---+      +-+-+---+  +-+-+---+
+;;                            |          |
+;;                            V          V
+;;                          +---+      +---+
+;;                          | 3 |      | 4 |
+;;                          +---+      +---+
 
-"Exercise 2.25: get the number 7 from each list structure"
+;; Exercise 2.25: get the number 7 from each list structure
 ;; (1 3 (5 7) 9)
 (car (cdr (car (cdr (cdr '(1 3 (5 7) 9))))))
 ;; ((7))
@@ -131,7 +130,7 @@ undestand"
 (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr '(1 (2 (3 (4 (5 (6 7))))))))))))))))))
 (cadadr (cadadr (cadadr '(1 (2 (3 (4 (5 (6 7)))))))))
 
-"Exercise 2.26: determine what the evaluation would be of append, cons and list"
+;; Exercise 2.26: determine what the evaluation would be of append, cons and list
 (append '(1 2 3) '(4 5 6)) ;; -> (1 2 3 4 5 6)
 (cons '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) 4 5 6)
 ;; I initially assumed the above would result in ((1 2 3) . (4 5 6)) forgetting
@@ -159,7 +158,7 @@ undestand"
         (else (append (fringe (car tree))
                       (fringe (cdr tree))))))
 
-"Exercise 2.29: mobile functions."
+;; Exercise 2.29: mobile functions.
 (define (make-mobile left right)
   (list left right))
 
@@ -198,7 +197,7 @@ undestand"
          right
          (total-weight right))))
 
-"Exercise 2.29: mobile functions changed by using cons instead of list."
+;; Exercise 2.29: mobile functions changed by using cons instead of list.
 (define (right-branch2 mobile)
   (cdr mobile))
 
@@ -286,9 +285,9 @@ undestand"
         (else (append (enumerate-tree (car tree))
                       (enumerate-tree (cdr tree))))))
 
-"Exercise 2.33: Fill in the missing expressions to complete the
-following definitions of some basic list-manipulation operations as
-accumulations:"
+;; Exercise 2.33: Fill in the missing expressions to complete the
+;; following definitions of some basic list-manipulation operations as
+;; accumulations:
 
 (define (accu-map p sequence)
   (accumulate (lambda (x y) (cons (p x) y)) nil sequence))
@@ -330,7 +329,7 @@ accumulations:"
       (cons (accumulate op init (map car seqs))
             (accumulate-n op init (map cdr seqs)))))
 
-"Exercise 2.37: define matrix operations"
+;; Exercise 2.37: define matrix operations
 
 (define (dot-product v w)
   (accumulate + 0 (map * v w)))
@@ -346,7 +345,7 @@ accumulations:"
   (let ((cols (transpose n)))
     (map (lambda (row) (matrix-*-vector cols row)) m)))
 
-"Exercise 2.38: fold-left and fold-right"
+;; Exercise 2.38: fold-left and fold-right
 
 (define fold-right accumulate)
 
@@ -366,7 +365,7 @@ accumulations:"
 ;; in order for an operation to be the same in either fold-left of fold-right
 ;; the operation must be commutative (and possibly associative as well?).
 
-"Exercise 2.39: reverse using fold-left and fold-right"
+;; Exercise 2.39: reverse using fold-left and fold-right
 
 (define (reverse-fr sequence)
   (fold-right (lambda (x y) (append y (list x))) nil sequence))
