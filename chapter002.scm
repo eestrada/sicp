@@ -21,16 +21,18 @@
 
 (define (reverse2 l)
   "Exercise 2.18: procedure to reverse a list"
-  (define (reverse2-iter f r)
+  (let reverse2-iter ((f l)
+                      (r '()))
     (if (eq? f '())
         r
-        (reverse2-iter (cdr f) (cons (car f) r))))
-  (reverse2-iter l '()))
+        (reverse2-iter (cdr f) (cons (car f) r)))))
 
 (define (same-parity first . rest)
   "Exercise 2.20: using dotted-tail notation, return only arguments
    that have the same even-odd parity as the first argument."
-  (define (sp-iter first-parity l r)
+  (let sp-iter ((first-parity (remainder first 2))
+                (l (list first))
+                (r rest))
     (if (eq? r '())
         l
         (let ((newr (cdr r)))
@@ -38,10 +40,7 @@
                 (sp-iter first-parity
                          (append! l (list (car r)))
                          newr)
-                (sp-iter first-parity l newr)))))
-  (sp-iter (remainder first 2)
-           (list first)
-           rest))
+                (sp-iter first-parity l newr))))))
 
 (define (square-list1 items)
   "Exercise 2.21: return squared list (using explicit recursion)"
@@ -57,23 +56,23 @@
   "Exercise 2.22: this doesn't work because he is using cons which builds
    the list in reverse since const can only know the head of the list and
    the only place to append a pair is to the front."
-  (define (iter things answer)
+  (let iter ((things items)
+             (answer nil))
     (if (null? things)
         answer
         (iter (cdr things)
-              (cons (square (car things)) answer))))
-  (iter items nil))
+              (cons (square (car things)) answer)))))
 
 (define (square-list-bad2 items)
   "Exercise 2.22: this doesn't work because he is placing a list as
    the first item in the pair when he is consing. Basically, he is making
    a really weird tree instead of a list."
-  (define (iter things answer)
+  (let iter ((things items)
+             (answer nil))
     (if (null? things)
         answer
         (iter (cdr things)
-              (cons answer (square (car things))))))
-  (iter items nil))
+              (cons answer (square (car things)))))))
 
 "Exercise 2.22: to get this to work, he should instead use the append or
 the append! functions to append new values to the END of the list."
@@ -133,14 +132,14 @@ undestand"
 
 (define (deep-reverse l)
   "Exercise 2.27: deep reverse function"
-  (define (reverse2-iter f r)
+  (let reverse2-iter ((f l)
+                      (r '()))
     (if (eq? f '())
         r
         (let ((head (if (list? (car f))
                         (reverse2-iter (car f) '())
                         (car f))))
-          (reverse2-iter (cdr f) (cons head r)))))
-  (reverse2-iter l '()))
+          (reverse2-iter (cdr f) (cons head r))))))
 
 (define (fringe tree)
   "Exercise 2.28: function to flatten a tree, left to right
@@ -433,12 +432,11 @@ accumulations:"
 
 (define (split orig splitter)
   "Exercise 2.45"
-  (define (rec painter n)
+  (lambda (painter n)
     (if (= n 0)
         painter
         (let ((smaller (rec painter (- n 1))))
-          (orig painter (splitter smaller smaller)))))
-  rec)
+          (orig painter (splitter smaller smaller))))))
 
 (define (frame-coord-map frame)
   (lambda (v)
@@ -571,3 +569,8 @@ accumulations:"
 ;; NOTE: I think I am going to transition to racket so that I can
 ;; actually draw these examples. It feels hard to be sure I am actually
 ;; understanding this section without any real feedback.
+
+;; NOTE: I could instead just read and write the images and lines to/from ppm
+;; files. I mean, it is super gross, but it would get the job done and using
+;; something like entr I could still view the images whenever they are modified on
+;; disk.
