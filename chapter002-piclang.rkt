@@ -99,7 +99,7 @@
 ;; the second part (box and pointer); that part I went to scheme wiki to
 ;; undestand
 
-'(1 (2 (3 4)))
+;; '(1 (2 (3 4)))
 
 ;; from scheme wiki at (http://community.schemewiki.org/?sicp-ex-2.24)
 ;;    +---+---+  +---+---+
@@ -123,20 +123,20 @@
 
 ;; Exercise 2.25: get the number 7 from each list structure
 ;; (1 3 (5 7) 9)
-(car (cdr (car (cdr (cdr '(1 3 (5 7) 9))))))
+;; (car (cdr (car (cdr (cdr '(1 3 (5 7) 9))))))
 ;; ((7))
-(car (car '((7))))
+;;(car (car '((7))))
 ;; (1 (2 (3 (4 (5 (6 7))))))
-(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr '(1 (2 (3 (4 (5 (6 7))))))))))))))))))
-(cadadr (cadadr (cadadr '(1 (2 (3 (4 (5 (6 7)))))))))
+;;(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr '(1 (2 (3 (4 (5 (6 7))))))))))))))))))
+;;(cadadr (cadadr (cadadr '(1 (2 (3 (4 (5 (6 7)))))))))
 
 ;; Exercise 2.26: determine what the evaluation would be of append, cons and list
-(append '(1 2 3) '(4 5 6)) ;; -> (1 2 3 4 5 6)
-(cons '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) 4 5 6)
+;;(append '(1 2 3) '(4 5 6)) ;; -> (1 2 3 4 5 6)
+;;(cons '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) 4 5 6)
 ;; I initially assumed the above would result in ((1 2 3) . (4 5 6)) forgetting
 ;; that if the cdr of a pair is another list, really it is just pointing to
 ;; another pair, meaning the list is simply extended.
-(list '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) (4 5 6))
+;;(list '(1 2 3) '(4 5 6)) ;; -> ((1 2 3) (4 5 6))
 
 (define (deep-reverse l)
   "Exercise 2.27: deep reverse function"
@@ -358,10 +358,10 @@
   (iter initial sequence))
 
 ;; what is the result of the following?
-(fold-right / 1 (list 1 2 3))       ;; 3 / 1 = 3, 2 / 3 = 2/3, 1 / 2/3 -> 3/2
-(fold-left / 1 (list 1 2 3))        ;; 1 / 1 = 1, 1 / 2 = 1/2, 1/2 / 3 -> 1/6
-(fold-right list nil (list 1 2 3))  ;; (1 (2 (3 ())))
-(fold-left list nil (list 1 2 3))   ;; (((() 1) 2) 3)
+;;(fold-right / 1 (list 1 2 3))       ;; 3 / 1 = 3, 2 / 3 = 2/3, 1 / 2/3 -> 3/2
+;;(fold-left / 1 (list 1 2 3))        ;; 1 / 1 = 1, 1 / 2 = 1/2, 1/2 / 3 -> 1/6
+;;(fold-right list nil (list 1 2 3))  ;; (1 (2 (3 ())))
+;;(fold-left list nil (list 1 2 3))   ;; (((() 1) 2) 3)
 ;; in order for an operation to be the same in either fold-left of fold-right
 ;; the operation must be commutative (and possibly associative as well?).
 
@@ -446,6 +446,53 @@
         (let ((smaller (rec painter (- n 1))))
           (orig painter (splitter smaller smaller)))))
   rec)
+
+;; Exercise 2.44
+
+(define (up-split painter n)
+  (if (= n 0)
+      painter
+      (let ((smaller (up-split painter (- n 1))))
+        (below painter (beside smaller smaller)))))
+
+(define (right-split painter n)
+  (if (= n 0)
+      painter
+      (let ((smaller (right-split painter (- n 1))))
+        (beside painter (below smaller smaller)))))
+
+(define (corner-split painter n)
+  (if (= n 0)
+      painter
+      (let ((up (up-split painter (- n 1)))
+            (right (right-split painter (- n 1))))
+        (let ((top-left (beside up up))
+              (bottom-right (below right right))
+              (corner (corner-split painter (- n 1))))
+          (beside (below painter top-left)
+                  (below bottom-right corner))))))
+;; Exercise 2.44 end
+
+;; Exercise 2.45
+
+(define (square-of-four tl tr bl br)
+  (lambda (painter)
+    (let ((top (beside (tl painter) (tr painter)))
+          (bottom (beside (bl painter) (br painter))))
+      (below bottom top))))
+
+(define (flipped-pairs painter)
+  (let ((combine4 (square-of-four identity flip-vert
+                                  identity flip-vert)))
+    (combine4 painter)))
+
+(define (square-limit painter n)
+  (let ((combine4 (square-of-four flip-horiz identity
+                                  rotate180 flip-vert)))
+    (combine4 (corner-split painter n))))
+
+;; Exercise 2.45 end
+
 
 (define (frame-coord-map frame)
   (lambda (v)
@@ -566,66 +613,169 @@
            (make-segment right bottom)
            (make-segment bottom left)))))
 
-;; (define wave-painter
-;;   ;; "Return a painter procedure that uses lines to draw the wave image from the book."
-;;   (let ((left (make-vect 0.0 0.5))
-;;         (top (make-vect 0.5 1.0))
-;;         (right (make-vect 1.0 0.5))
-;;         (bottom (make-vect 0.5 0.0)))
-;;     (segments->painter
-;;      (list (make-segment left top)
-;;            (make-segment top right)
-;;            (make-segment right bottom)
-;;            (make-segment bottom left)))))
-
-
 ;; Original wave-painter code taken from https://gist.github.com/etscrivner/e0105d9f608b00943a49
 (define wave-painter
   ;; "Return a painter procedure that uses lines to draw the wave image from the book."
   (segments->painter
    (list
-    (make-segment (make-vect 0.5 0.4) ;;; leg triangle
-                  (make-vect 0.6 0.0))
-    (make-segment (make-vect 0.5 0.4)
-                  (make-vect 0.4 0.0))
-    (make-segment (make-vect 0.3 0.0)
-                  (make-vect 0.35 0.4))
-    (make-segment (make-vect 0.35 0.4)
-                  (make-vect 0.3 0.7))
-    (make-segment (make-vect 0.3 0.7)
-                  (make-vect 0.2 0.6))
-    (make-segment (make-vect 0.2 0.6)
-                  (make-vect 0 0.8))
-    (make-segment (make-vect 0 0.9)
-                  (make-vect 0.2 0.7))
-    (make-segment (make-vect 0.2 0.7)
-                  (make-vect 0.3 0.75))
-    (make-segment (make-vect 0.3 0.75)
-                  (make-vect 0.4 0.75))
-    (make-segment (make-vect 0.4 0.75)
-                  (make-vect 0.35 0.9))
-    (make-segment (make-vect 0.35 0.9)
-                  (make-vect 0.4 1.0))
-    (make-segment (make-vect 0.5 1.0)
-                  (make-vect 0.55 0.9))
-    (make-segment (make-vect 0.55 0.9)
-                  (make-vect 0.5 0.75))
-    (make-segment (make-vect 0.5 0.75)
-                  (make-vect 0.6 0.75))
-    (make-segment (make-vect 0.6 0.75)
-                  (make-vect 1.0 0.45))
-    (make-segment (make-vect 1.0 0.3)
-                  (make-vect 0.6 0.5))
-    (make-segment (make-vect 0.6 0.5)
-                  (make-vect 0.7 0.0)))))
+    (make-segment (make-vect 0.50 0.40) (make-vect 0.60 0.00))
+    (make-segment (make-vect 0.50 0.40) (make-vect 0.40 0.00))
+    (make-segment (make-vect 0.30 0.00) (make-vect 0.35 0.40))
+    (make-segment (make-vect 0.35 0.40) (make-vect 0.30 0.70))
+    (make-segment (make-vect 0.30 0.70) (make-vect 0.20 0.60))
+    (make-segment (make-vect 0.20 0.60) (make-vect 0.00 0.80))
+    (make-segment (make-vect 0.00 0.90) (make-vect 0.20 0.70))
+    (make-segment (make-vect 0.20 0.70) (make-vect 0.30 0.75))
+    (make-segment (make-vect 0.30 0.75) (make-vect 0.40 0.75))
+    (make-segment (make-vect 0.40 0.75) (make-vect 0.35 0.90))
+    (make-segment (make-vect 0.35 0.90) (make-vect 0.40 1.00))
+    (make-segment (make-vect 0.50 1.00) (make-vect 0.55 0.90))
+    (make-segment (make-vect 0.55 0.90) (make-vect 0.50 0.75))
+    (make-segment (make-vect 0.50 0.75) (make-vect 0.60 0.75))
+    (make-segment (make-vect 0.60 0.75) (make-vect 1.00 0.45))
+    (make-segment (make-vect 1.00 0.30) (make-vect 0.60 0.50))
+    (make-segment (make-vect 0.60 0.50) (make-vect 0.70 0.00)))))
 
 ;; Exercise 2.49 end
 
-;; NOTE: I think I am going to transition to racket so that I can
-;; actually draw these examples. It feels hard to be sure I am actually
-;; understanding this section without any real feedback.
+(define (transform-painter painter origin corner1 corner2)
+  (lambda (frame)
+    (let ((m (frame-coord-map frame)))
+      (let ((new-origin (m origin)))
+        (painter (make-frame
+                  new-origin
+                  (sub-vect (m corner1) new-origin)
+                  (sub-vect (m corner2) new-origin)))))))
 
-(wave-painter (make-frame
+(define (flip-vert painter)
+  (transform-painter painter
+                     (make-vect 0.0 1.0)   ;new origin
+                     (make-vect 1.0 1.0)   ;new end of edge1
+                     (make-vect 0.0 0.0))) ;new end of edge2
+
+(define (shrink-to-upper-right painter)
+  (transform-painter painter
+                     (make-vect 0.5 0.5)
+                     (make-vect 1.0 0.5)
+                     (make-vect 0.5 1.0)))
+
+(define (rotate90 painter)
+  (transform-painter painter
+                     (make-vect 1.0 0.0)
+                     (make-vect 1.0 1.0)
+                     (make-vect 0.0 0.0)))
+
+(define (squash-inwards painter)
+  (transform-painter painter
+                     (make-vect 0.0 0.0)
+                     (make-vect 0.65 0.35)
+                     (make-vect 0.35 0.65)))
+
+(define (beside painter1 painter2)
+  (let ((split-point (make-vect 0.5 0.0)))
+    (let ((paint-left
+           (transform-painter
+            painter1
+            (make-vect 0.0 0.0)
+            split-point
+            (make-vect 0.0 1.0)))
+          (paint-right
+           (transform-painter
+            painter2
+            split-point
+            (make-vect 1.0 0.0)
+            (make-vect 0.5 1.0))))
+      (lambda (frame)
+        (paint-left frame)
+        (paint-right frame)))))
+
+;; Exercise 2.50 start
+(define (flip-horiz painter)
+  (transform-painter painter
+                     (make-vect 1.0 0.0)   ;new origin
+                     (make-vect 0.0 0.0)   ;new end of edge1
+                     (make-vect 1.0 1.0))) ;new end of edge2
+
+(define (rotate180 painter)
+  (transform-painter painter
+                     (make-vect 1.0 1.0)   ;new origin
+                     (make-vect 0.0 1.0)   ;new end of edge1
+                     (make-vect 1.0 0.0))) ;new end of edge2
+
+(define (rotate270 painter)
+  (transform-painter painter
+                     (make-vect 0.0 1.0)   ;new origin
+                     (make-vect 0.0 0.0)   ;new end of edge1
+                     (make-vect 1.0 1.0))) ;new end of edge2
+;; Exercise 2.50 end
+
+;; Exercise 2.51 start
+(define (below painter1 painter2)
+  (let ((split-point (make-vect 0.0 0.5)))
+    (let ((paint-bottom
+           (transform-painter
+            painter1
+            (make-vect 0.0 0.0)
+            (make-vect 1.0 0.0)
+            split-point))
+          (paint-top
+           (transform-painter
+            painter2
+            split-point
+            (make-vect 1.0 0.5)
+            (make-vect 0.0 1.0))))
+      (lambda (frame)
+        (paint-bottom frame)
+        (paint-top frame)))))
+
+(define (below2 painter1 painter2)
+  (let ((paint-left (rotate90 painter2))
+        (paint-right (rotate90 painter1)))
+    (rotate270 (beside paint-left paint-right))))
+;; Exercise 2.51 end
+
+
+;; Exercise 2.52 start
+
+(define (corner-split2 painter n)
+  (if (= n 0)
+      painter
+      (let ((up (up-split painter 1))
+            (right (right-split painter 1)))
+        (let ((top-left (beside up up))
+              (bottom-right (below right right))
+              (corner (corner-split painter (- n 1))))
+          (beside (below painter top-left)
+                  (below bottom-right corner))))))
+
+(define (square-limit2 painter n)
+  (let ((combine4 (square-of-four flip-horiz identity
+                                  rotate180 flip-vert)))
+    (combine4 (corner-split2 painter n))))
+
+;; Exercise 2.52 end
+
+(define wave2 (beside wave-painter (flip-vert wave-painter)))
+(define wave4 (below wave2 wave2))
+
+(define wave-split (up-split wave-painter 8))
+
+(define wave-square (square-limit2 wave-painter 4))
+
+(define wave-flip (flipped-pairs wave-painter))
+
+'((below2 x-painter wave-painter) (make-frame
+                  (make-vect 0 0)
+                  (make-vect 1 0)
+                  (make-vect 0 1)))
+
+
+'((rotate270 wave-painter) (make-frame
+                  (make-vect 0 0)
+                  (make-vect 1 0)
+                  (make-vect 0 1)))
+
+(wave-square (make-frame
                   (make-vect 0 0)
                   (make-vect 1 0)
                   (make-vect 0 1)))
